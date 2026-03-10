@@ -168,6 +168,9 @@ typing_delay_ms = 120
 
 ## 注意事项
 
+- **浏览器默认常驻**：首次调用自动启动 Chrome，后续调用复用同一个 Chrome 实例，无需额外参数
+- 所有任务完成后调用 `python3 {baseDir}/scripts/xhs.py browser kill` 关闭浏览器
+- Claude 在批量任务最后一步自动调用 `browser kill` 清理
 - 默认有头模式运行，需要 headless 请加 `--headless`
 - 所有操作前会自动检查登录状态，未登录时启动 QR 扫码流程
 - detail/comment 遇到安全拦截时会自动探测会话是否过期，过期则触发扫码重新登录并重试（最多 1 次）
@@ -177,6 +180,16 @@ typing_delay_ms = 120
 - 加 `--debug` 参数可查看详细日志
 
 ## 批量操作指引
+
+浏览器默认常驻运行，批量任务自动复用同一 Chrome 实例：
+
+```bash
+# 示例：批量评论 — 无需手动启动浏览器
+python3 {baseDir}/scripts/xhs.py comment --url URL1 --text "..."   # 自动启动 Chrome
+python3 {baseDir}/scripts/xhs.py comment --url URL2 --text "..."   # 复用已有 Chrome
+python3 {baseDir}/scripts/xhs.py comment --url URL3 --text "..."   # 同上
+python3 {baseDir}/scripts/xhs.py browser kill                       # 任务完成，关闭浏览器
+```
 
 当需要批量抓取笔记详情（如 search → 逐条 detail）时，遵循以下流程：
 
@@ -188,3 +201,4 @@ typing_delay_ms = 120
    - 单条失败不中断批量任务，继续处理下一条
    - 失败的笔记保留 search 摘要（标题/作者/热度/URL），标记为"⚠️ 详情获取失败"
 5. **最终汇总**：报告中区分"完整详情"和"仅摘要（详情获取失败）"的笔记
+6. **清理**：所有任务完成后执行 `browser kill` 关闭 Chrome

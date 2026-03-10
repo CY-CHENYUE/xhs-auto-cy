@@ -51,13 +51,28 @@ def _resolve_profile(args) -> str:
 
 
 def _get_page(profile_name: str, headless: bool = False):
-    """Launch browser if needed and return the active page."""
+    """Get active page, connecting to standalone Chrome or launching one if needed."""
+    # 1. Already have an in-memory page? Return it.
     page = browser_pool.get_page(profile_name)
     if page is not None:
         return page
 
-    cfg = config_store.load_config()
     profile_dir = config_store.get_profile_dir(profile_name)
+
+    # 2. Try connecting to an already-running standalone Chrome
+    result = browser_pool.connect_existing(profile_name, profile_dir=profile_dir)
+    if result:
+        return result[2]  # page
+
+    # 3. No Chrome running → launch standalone + connect
+    browser_pool.launch_standalone(profile_dir, profile_name, headless=headless)
+    result = browser_pool.connect_existing(profile_name, profile_dir=profile_dir)
+    if result:
+        return result[2]
+
+    # 4. Fallback: use original Playwright persistent context (e.g. Chrome not found)
+    log.warning("Standalone Chrome failed, falling back to Playwright-managed browser")
+    cfg = config_store.load_config()
     channel = cfg.get("default", {}).get("chrome_channel", "chrome")
     _, _, page = browser_pool.launch(
         profile_dir=profile_dir,
@@ -108,7 +123,7 @@ def cmd_browser(args):
 
     elif args.action == "kill":
         browser_pool.kill(profile)
-        print(f"Browser killed for profile '{profile}'")
+        print(f"Browser killed for profile '{profile}' (standalone Chrome terminated)")
 
     elif args.action == "status":
         st = browser_pool.status()
@@ -547,7 +562,7 @@ def main():
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(1)
     finally:
-        browser_pool.kill_all()
+        browser_pool.disconnect_all()  # Only disconnect Playwright; Chrome stays running
 
 
 if __name__ == "__main__":
