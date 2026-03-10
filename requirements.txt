@@ -1,0 +1,4 @@
+playwright>=1.40
+playwright-stealth>=1.0
+httpx>=0.25
+tomli_w>=1.0

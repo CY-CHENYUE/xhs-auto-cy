@@ -1,0 +1,77 @@
+# XHS DOM Selectors Reference
+# Centralized selector definitions for easy maintenance.
+# Prefer text=, placeholder=, role= over CSS class selectors.
+# CSS classes on XHS change frequently — use them only as last resort.
+#
+# Format: semantic_name = "selector_string"
+# Multiple fallbacks separated with comma in array form.
+
+[login]
+qr_code = ['[class*="qrcode"]', '[class*="QR"]', 'canvas', '[class*="login-qr"]']
+phone_tab = ['text=手机号登录']
+agree_checkbox = ['text=阅读并同意']
+
+[publish]
+# Entry point
+create_button = ['text=发布笔记', 'text=我要发布', '[class*="publish"]']
+upload_image_input = ['input[type="file"][accept*="image"]']
+upload_video_input = ['input[type="file"][accept*="video"]']
+
+# Form fields
+title_input = ['placeholder=填写标题', '[class*="title"] input', '[class*="title"] textarea']
+content_editor = ['[contenteditable="true"]', '[class*="editor"]', '[class*="content"] [contenteditable]']
+topic_input = ['text=添加话题', 'placeholder=搜索话题']
+location_input = ['text=添加地点', 'placeholder=搜索地点']
+
+# Permission / visibility
+permission_button = ['text=设置权限', 'text=权限', '[class*="permission"]', '[class*="visibility"]']
+private_option = ['text=仅自己可见', 'text=仅自己', '[class*="private"]']
+public_option = ['text=公开', '[class*="public"]']
+
+# Submit
+publish_button = ['text=发布', 'button:has-text("发布")']
+save_draft_button = ['text=存草稿']
+
+# Video-specific
+video_tab = ['text=视频', '[class*="video-tab"]']
+cover_upload = ['text=上传封面', '[class*="cover"] input[type="file"]']
+video_processing = ['text=处理中', 'text=上传中', '[class*="progress"]']
+
+[search]
+search_input = ['placeholder=搜索', 'input[type="search"]', '[class*="search"] input']
+search_button = ['[class*="search"] button', 'button:has-text("搜索")']
+sort_dropdown = ['text=排序', '[class*="sort"]']
+note_card = ['[class*="note-item"]', '[class*="feed-card"]', 'a[href*="/explore/"]']
+
+[note]
+title = ['[class*="title"]', 'h1']
+content = ['[class*="desc"]', '[class*="content"]']
+author_name = ['[class*="author"] [class*="name"]', '[class*="user-name"]']
+like_count = ['[class*="like"] [class*="count"]', 'text=赞']
+collect_count = ['[class*="collect"] [class*="count"]', 'text=收藏']
+comment_count = ['[class*="comment"] [class*="count"]', 'text=评论']
+share_count = ['[class*="share"] [class*="count"]']
+image_list = ['[class*="slide"] img', '[class*="carousel"] img']
+
+[comment]
+input_field = ['[contenteditable="true"]', 'placeholder=说点什么', '[class*="comment"] input']
+submit_button = ['text=发送', 'button:has-text("发送")']
+
+[notification]
+tab_mentions = ['text=@我的', 'text=提及']
+tab_likes = ['text=赞', 'text=点赞']
+tab_comments = ['text=评论']
+tab_follows = ['text=新增关注', 'text=关注']
+item = ['[class*="notification-item"]', '[class*="msg-item"]']
+
+[dashboard]
+overview_section = ['[class*="overview"]', '[class*="data-center"]']
+metric_card = ['[class*="metric"]', '[class*="stat"]']
+notes_table = ['table', '[class*="note-list"]']
+period_selector = ['text=近7天', 'text=近30天']
+
+[common]
+avatar = ['[class*="avatar"]', 'img[class*="avatar"]']
+user_info = ['[class*="user"], [class*="avatar"], [class*="creator"]']
+loading = ['[class*="loading"]', '[class*="spinner"]']
+modal_close = ['[class*="close"]', 'button[aria-label="Close"]']
